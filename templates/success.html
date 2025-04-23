@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Verification - विप्रVivah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="progress-nav">
+        <div class="progress-steps">
+            <div class="step">1</div>
+            <div class="step">2</div>
+            <div class="step">3</div>
+            <div class="step">4</div>
+            <div class="step active">6</div>
+            
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Profile Verification</h1>
+            <p>Please review your profile information before final submission</p>
+        </div>
+
+        {% if profile_data.identity.profile_picture %}
+        <div class="profile-image-wrapper">
+            <img src="{{ profile_data.identity.profile_picture }}" alt="Profile Picture" class="profile-photo">
+        </div>
+        <div style="text-align: center; margin-top: -1rem; margin-bottom: 1.5rem;">
+            <strong>{{ profile_data.basic_info.first_name }} {{ profile_data.basic_info.middle_name }} {{ profile_data.basic_info.last_name }}</strong>
+        </div>
+        {% endif %}
+
+        <div class="verification-container">
+
+            <div class="verification-section">
+                <h3>Partner Preferences</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Looking For:</label> <span>{{ profile_data.preferences.looking_for }}</span></div>
+                    <div class="verification-item"><label>Age Range:</label> <span>{{ profile_data.preferences.age_min }} - {{ profile_data.preferences.age_max }}</span></div>
+                    <div class="verification-item"><label>Mother Tongue:</label> <span>{{ profile_data.preferences.mother_tongue }}</span></div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <h3>Basic Information</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Full Name:</label> <span>{{ profile_data.basic_info.first_name }} {{ profile_data.basic_info.middle_name }} {{ profile_data.basic_info.last_name }}</span></div>
+                    <div class="verification-item"><label>Date of Birth:</label> <span>{{ profile_data.basic_info.dob }}</span></div>
+                    <div class="verification-item"><label>Gender:</label> <span>{{ profile_data.basic_info.gender }}</span></div>
+                    <div class="verification-item"><label>Phone:</label> <span>{{ profile_data.basic_info.phone }}</span></div>
+                    <div class="verification-item"><label>Email:</label> <span>{{ profile_data.basic_info.email }}</span></div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <h3>Address Information</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Temporary Address:</label> 
+                        <span>{{ profile_data.address.temp_address }}, {{ profile_data.address.temp_city }}, {{ profile_data.address.temp_state }} - {{ profile_data.address.temp_pincode }}</span>
+                    </div>
+                    <div class="verification-item"><label>Permanent Address:</label> 
+                        <span>{{ profile_data.address.perm_address }}, {{ profile_data.address.perm_city }}, {{ profile_data.address.perm_state }} - {{ profile_data.address.perm_pincode }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <h3>Family & Lifestyle</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Lives with Family:</label> <span>{{ profile_data.address.lives_with_family }}</span></div>
+                    <div class="verification-item"><label>Marital Status:</label> <span>{{ profile_data.address.marital_status }}</span></div>
+                    <div class="verification-item"><label>Food Habits:</label> <span>{{ profile_data.address.diet }}</span></div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <h3>Education & Career</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Highest Qualification:</label> <span>{{ profile_data.career.qualification }}</span></div>
+                    <div class="verification-item"><label>Specialization:</label> <span>{{ profile_data.career.specialization }}</span></div>
+                    <div class="verification-item"><label>Working Status:</label> <span>{{ profile_data.career.working_status }}</span></div>
+                    <div class="verification-item"><label>Works With:</label> <span>{{ profile_data.career.works_with }}</span></div>
+                    <div class="verification-item"><label>Job Title:</label> <span>{{ profile_data.career.job_title }}</span></div>
+                    <div class="verification-item"><label>Income:</label> <span>{{ profile_data.career.income }}</span></div>
+                    <div class="verification-item"><label>Instagram:</label> <span>{{ profile_data.career.instagram }}</span></div>
+                    <div class="verification-item"><label>Facebook:</label> <span>{{ profile_data.career.facebook }}</span></div>
+                    <div class="verification-item"><label>LinkedIn:</label> <span>{{ profile_data.career.linkedin }}</span></div>
+                </div>
+            </div>
+
+            <div class="verification-section">
+                <h3>Identity Verification</h3>
+                <div class="verification-row">
+                    <div class="verification-item"><label>Identity Type:</label> <span>{{ profile_data.identity.identity_type }}</span></div>
+                    <div class="verification-item"><label>Identity Number:</label> <span>{{ profile_data.identity.identity_number }}</span></div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="back-to-profile4-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <form action="{{ url_for('profile_success') }}" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-primary">
+                        Submit Profile <i class="fas fa-check"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.verification-item').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                this.classList.add('highlight');
+            });
+            element.addEventListener('mouseleave', function() {
+                this.classList.remove('highlight');
+            });
+        });
+    </script>
+    <script>
+        document.getElementById("back-to-profile4-btn").addEventListener("click", function () {
+            window.location.href = "{{ url_for('profile4') }}";
+        });
+    </script>
+
+    <!-- Add theme toggle button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Add theme toggle script -->
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn?.querySelector('i');
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+
+        // Handle toggle button
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                const newTheme = isDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    </script>
+</body>
+</html>

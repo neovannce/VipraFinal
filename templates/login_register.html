@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - विप्रVivah</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lstyles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1><i class="fas fa-heart"></i> विप्रVivah</h1>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <p class="subtitle">Find your perfect match</p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="forms-container">
+            <!-- Login Form -->
+            <div class="form-section">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                    <div class="form-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" placeholder="Username" required 
+                               pattern="[A-Za-z0-9_]{3,20}" 
+                               title="Username must be 3-20 characters long and can only contain letters, numbers, and underscores">
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" placeholder="Password" required
+                               minlength="6"
+                               title="Password must be at least 6 characters long">
+                        <small class="help-text">Password must be at least 6 characters long</small>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="form-section">
+                <h2><i class="fas fa-user-plus"></i> Register</h2>
+                <form action="{{ url_for('register') }}" method="POST" class="auth-form" id="register-form">
+                    <div class="form-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" placeholder="Username" required
+                               pattern="[A-Za-z0-9_]{3,20}"
+                               title="Username must be 3-20 characters long and can only contain letters, numbers, and underscores">
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" name="email" placeholder="Email" required
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               title="Please enter a valid email address">
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" placeholder="Password" required
+                               minlength="6"
+                               title="Password must be at least 6 characters long">
+                        <small class="help-text">Password must be at least 6 characters long</small>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="confirm_password" placeholder="Confirm Password" required
+                               minlength="6"
+                               title="Please confirm your password">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-register">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('register-form');
+            
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    const password = this.querySelector('input[name="password"]').value;
+                    const confirmPassword = this.querySelector('input[name="confirm_password"]').value;
+                    
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        alert('Passwords do not match!');
+                    }
+                });
+            }
+
+            // Add input validation feedback
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.classList.add('invalid');
+                });
+
+                input.addEventListener('input', function() {
+                    this.classList.remove('invalid');
+                });
+            });
+        });
+    </script>
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn?.querySelector('i');
+    
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+    
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+    
+        // Handle toggle button
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                const newTheme = isDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    </script>
+    
+</body>
+</html>

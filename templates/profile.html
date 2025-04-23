@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Profile - विप्रVivah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="progress-nav">
+        <div class="progress-steps">
+            <div class="step">1</div>
+            <div class="step active">2</div>
+            <div class="step ">3</div>
+            <div class="step">4</div>
+            <div class="step">5</div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Basic Information</h1>
+            <p>Please provide your basic details to continue</p>
+        </div>
+
+        <form class="profile-form" action="{{ url_for('edit_profile' if is_edit else 'profile') }}" method="POST">
+            <div class="form-group">
+                <label for="profile_for">This profile is for</label>
+                <select id="profile_for" name="profile_for" required>
+                    <option value="" disabled {% if not is_edit %}selected{% endif %}>Select</option>
+                    <option value="myself" {% if is_edit and basic_info.profile_for == 'myself' %}selected{% endif %}>Myself</option>
+                    <option value="son" {% if is_edit and basic_info.profile_for == 'son' %}selected{% endif %}>Son</option>
+                    <option value="daughter" {% if is_edit and basic_info.profile_for == 'daughter' %}selected{% endif %}>Daughter</option>
+                    <option value="brother" {% if is_edit and basic_info.profile_for == 'brother' %}selected{% endif %}>Brother</option>
+                    <option value="sister" {% if is_edit and basic_info.profile_for == 'sister' %}selected{% endif %}>Sister</option>
+                    <option value="friend" {% if is_edit and basic_info.profile_for == 'friend' %}selected{% endif %}>Friend</option>
+                    <option value="other" {% if is_edit and basic_info.profile_for == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
+                    <option value="" disabled {% if not is_edit %}selected{% endif %}>Select</option>
+                    <option value="male" {% if is_edit and basic_info.gender == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if is_edit and basic_info.gender == 'female' %}selected{% endif %}>Female</option>
+                    <option value="other" {% if is_edit and basic_info.gender == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" required 
+                           value="{{ basic_info.first_name if is_edit else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="middle_name">Middle Name</label>
+                    <input type="text" id="middle_name" name="middle_name"
+                           value="{{ basic_info.middle_name if is_edit else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" required
+                           value="{{ basic_info.last_name if is_edit else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="father_name">Father's Name</label>
+                    <input type="text" id="father_name" name="father_name" required
+                           value="{{ basic_info.father_name if is_edit else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="mother_name">Mother's Name</label>
+                    <input type="text" id="mother_name" name="mother_name" required
+                           value="{{ basic_info.mother_name if is_edit else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required
+                           value="{{ basic_info.dob if is_edit else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <select id="age" name="age" required>
+                        <option value="" disabled {% if not is_edit %}selected{% endif %}>Age</option>
+                        {% for i in range(21, 42) %}
+                        <option value="{{ i }}" {% if is_edit and basic_info.age|int == i %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="religion">Subcaste</label>
+                    <select id="religion" name="religion" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="pandey">Pandey</option>
+                        <option value="mishra">Mishra</option>
+                        <option value="tripathi">Tripathi</option>
+                        <option value="shukla">Shukla</option>
+                        <option value="upadhyay">Upadhyay</option>
+                        <option value="chaturvedi">Chaturvedi</option>
+                        <option value="trivedi">Trivedi</option>
+                        <option value="dwivedi">Dwivedi</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gotra">Gotra</label>
+                    <select id="gotra" name="gotra" required>
+                        <option value="" disabled selected>Select Gotra</option>
+                        <option value="kashyap">Kashyap</option>
+                        <option value="bharadwaj">Bharadwaj</option>
+                        <option value="vishwamitra">Vishwamitra</option>
+                        <option value="atri">Atri</option>
+                        <option value="agastya">Agastya</option>
+                        <option value="gautam">Gautam</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="mother_tongue">Mother Tongue</label>
+                <select id="mother_tongue" name="mother_tongue" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="bengali">Bengali</option>
+                    <option value="marathi">Marathi</option>
+                    <option value="tamil">Tamil</option>
+                    <option value="telugu">Telugu</option>
+                    <option value="gujarati">Gujarati</option>
+                    <option value="kannada">Kannada</option>
+                    <option value="odia">Odia</option>
+                    <option value="malayalam">Malayalam</option>
+                    <option value="punjabi">Punjabi</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="height">Height</label>
+                    <input type="text" id="height" name="height" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email ID</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('index') }}'">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Continue <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add smooth transitions and form validation
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            element.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        // Calculate age from date of birth
+        document.getElementById('dob').addEventListener('change', function() {
+            const dob = new Date(this.value);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            
+            const ageSelect = document.getElementById('age');
+            ageSelect.value = age;
+        });
+    </script>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn?.querySelector('i');
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+
+        // Handle toggle button
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                const newTheme = isDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    </script>
+</body>
+</html>

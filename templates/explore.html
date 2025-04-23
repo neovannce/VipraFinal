@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Profiles - विप्रVivah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('home') }}" class="navbar-brand">
+                <i class="fas fa-heart"></i>
+                विप्रVivah
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="{{ url_for('myprofile') }}"><i class="fas fa-user"></i> My Profile</a></li>
+            </ul>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="filter-section">
+        <div class="filter-header">
+            <h2><i class="fas fa-filter"></i> Filter Profiles</h2>
+            <div class="active-filters">
+                {% if current_filters %}
+                    {% for key, value in current_filters.items() %}
+                        {% if value and value != "Any" %}
+                            <span class="active-filter">
+                                {{ key|title }}: {{ value }}
+                                <button class="remove-filter" data-filter="{{ key }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <form class="filter-form" method="GET" action="{{ url_for('explore') }}" id="filterForm">
+            <div class="filter-group">
+                <label for="gender"><i class="fas fa-venus-mars"></i> Looking for</label>
+                <select class="filter-select" id="gender" name="gender">
+                    <option value="">Any</option>
+                    <option value="Male" {% if current_filters.gender == "Male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if current_filters.gender == "Female" %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if current_filters.gender == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="mother_tongue"><i class="fas fa-language"></i> Mother Tongue</label>
+                <select class="filter-select" id="mother_tongue" name="mother_tongue">
+                    <option value="">Any</option>
+                    <option value="Hindi" {% if current_filters.mother_tongue == "Hindi" %}selected{% endif %}>Hindi</option>
+                    <option value="Marathi" {% if current_filters.mother_tongue == "Marathi" %}selected{% endif %}>Marathi</option>
+                    <option value="Gujarati" {% if current_filters.mother_tongue == "Gujarati" %}selected{% endif %}>Gujarati</option>
+                    <option value="Bengali" {% if current_filters.mother_tongue == "Bengali" %}selected{% endif %}>Bengali</option>
+                    <option value="Tamil" {% if current_filters.mother_tongue == "Tamil" %}selected{% endif %}>Tamil</option>
+                    <option value="Telugu" {% if current_filters.mother_tongue == "Telugu" %}selected{% endif %}>Telugu</option>
+                    <option value="Kannada" {% if current_filters.mother_tongue == "Kannada" %}selected{% endif %}>Kannada</option>
+                    <option value="Malayalam" {% if current_filters.mother_tongue == "Malayalam" %}selected{% endif %}>Malayalam</option>
+                    <option value="Other" {% if current_filters.mother_tongue == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="city"><i class="fas fa-city"></i> City</label>
+                <select class="filter-select" id="city" name="city">
+                    <option value="">Any</option>
+                    <option value="Mumbai" {% if current_filters.city == "Mumbai" %}selected{% endif %}>Mumbai</option>
+                    <option value="Delhi" {% if current_filters.city == "Delhi" %}selected{% endif %}>Delhi</option>
+                    <option value="Bangalore" {% if current_filters.city == "Bangalore" %}selected{% endif %}>Bangalore</option>
+                    <option value="Hyderabad" {% if current_filters.city == "Hyderabad" %}selected{% endif %}>Hyderabad</option>
+                    <option value="Chennai" {% if current_filters.city == "Chennai" %}selected{% endif %}>Chennai</option>
+                    <option value="Kolkata" {% if current_filters.city == "Kolkata" %}selected{% endif %}>Kolkata</option>
+                    <option value="Pune" {% if current_filters.city == "Pune" %}selected{% endif %}>Pune</option>
+                    <option value="Ahmedabad" {% if current_filters.city == "Ahmedabad" %}selected{% endif %}>Ahmedabad</option>
+                    <option value="Other" {% if current_filters.city == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="gotra"><i class="fas fa-tree"></i> Gotra</label>
+                <select class="filter-select" id="gotra" name="gotra">
+                    <option value="">Any</option>
+                    <option value="Bharadwaj" {% if current_filters.gotra == "Bharadwaj" %}selected{% endif %}>Bharadwaj</option>
+                    <option value="Kashyap" {% if current_filters.gotra == "Kashyap" %}selected{% endif %}>Kashyap</option>
+                    <option value="Vatsa" {% if current_filters.gotra == "Vatsa" %}selected{% endif %}>Vatsa</option>
+                    <option value="Vishwamitra" {% if current_filters.gotra == "Vishwamitra" %}selected{% endif %}>Vishwamitra</option>
+                    <option value="Jamadagni" {% if current_filters.gotra == "Jamadagni" %}selected{% endif %}>Jamadagni</option>
+                    <option value="Vasistha" {% if current_filters.gotra == "Vasistha" %}selected{% endif %}>Vasistha</option>
+                    <option value="Koundinya" {% if current_filters.gotra == "Koundinya" %}selected{% endif %}>Koundinya</option>
+                    <option value="Harita" {% if current_filters.gotra == "Harita" %}selected{% endif %}>Harita</option>
+                    <option value="Other" {% if current_filters.gotra == "Other" %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn-primary" id="searchBtn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <button type="button" class="btn-secondary" id="clearFilters">
+                    <i class="fas fa-times"></i> Clear Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="profiles-container" id="profilesContainer">
+        {% for profile in profiles %}
+        <a href="{{ url_for('profile_detail', profile_id=profile.id) }}" class="profile-card">
+            <div class="profile-image">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture }}" alt="{{ profile.name }}" class="profile-picture">
+                {% else %}
+                <div class="no-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="profile-info">
+                <h3>{{ profile.name }}</h3>
+                <div class="profile-details">
+                    <p><i class="fas fa-birthday-cake"></i> {{ profile.age }} years</p>
+                    <p><i class="fas fa-language"></i> {{ profile.mother_tongue }}</p>
+                    <p><i class="fas fa-city"></i> {{ profile.city }}</p>
+                    <p><i class="fas fa-tree"></i> {{ profile.gotra }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="disclaimer">
+                <h4><i class="fas fa-info-circle"></i> Disclaimer</h4>
+                <p>विप्रVivah is a platform for Brahmin matrimony. We verify profiles to ensure authenticity, but we recommend users to exercise due diligence before proceeding with any match.</p>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 विप्रVivah. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Filter functionality
+        const filterForm = document.getElementById('filterForm');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const searchBtn = document.getElementById('searchBtn');
+        const profilesContainer = document.getElementById('profilesContainer');
+
+        // Handle filter changes
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value === '') {
+                    this.closest('.filter-group').classList.remove('active');
+                } else {
+                    this.closest('.filter-group').classList.add('active');
+                }
+            });
+        });
+
+        // Clear filters
+        clearFiltersBtn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.value = '';
+                select.closest('.filter-group').classList.remove('active');
+            });
+            filterForm.submit();
+        });
+
+        // Remove individual filter
+        document.querySelectorAll('.remove-filter').forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                const select = document.getElementById(filter);
+                if (select) {
+                    select.value = '';
+                    filterForm.submit();
+                }
+            });
+        });
+
+        // Show loading state during search
+        searchBtn.addEventListener('click', function() {
+            profilesContainer.classList.add('loading');
+        });
+
+        // Initialize active filter groups
+        document.querySelectorAll('.filter-select').forEach(select => {
+            if (select.value !== '') {
+                select.closest('.filter-group').classList.add('active');
+            }
+        });
+    </script>
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn?.querySelector('i');
+    
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+    
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+    
+        // Handle toggle button
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                const newTheme = isDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+:root {
+    --primary-color: #e74c3c;
+    --secondary-color: #2c3e50;
+    --accent-color: #f39c12;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --background-light: #f9f9f9;
+    --background-dark: #2c3e50;
+    --border-color: #ddd;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 6rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.profile-header {
+    text-align: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+/* Profile Info as Grid Cards */
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.profile-info p {
+    background-color: white;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.profile-info p strong {
+    display: block;
+    color: var(--primary-color);
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+/* Social Media Section */
+.social-media-links {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.social-media-links h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.social-media-links ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.social-media-links li {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.social-media-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-speed) ease;
+}
+
+.social-media-links a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 4rem;
+    padding: 2rem 0;
+    background-color: var(--background-dark);
+    color: white;
+    font-size: 0.9rem;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.footer a {
+    color: white;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* Responsive Padding for Mobile */
+@media (max-width: 768px) {
+    .container {
+        margin-top: 7rem;
+    }
+
+    .profile-header {
+        font-size: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    margin-left: 1rem;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.2);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar {
+    background: #1f1f1f;
+}
+
+body.dark-mode .profile-info p {
+    background: #1e1e1e;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .social-media-links {
+    background: #1e1e1e;
+}
+
+body.dark-mode h1,
+body.dark-mode .social-media-links h2 {
+    color: #f1c40f;
+}
+
+body.dark-mode .theme-toggle {
+    color: #f1f1f1;
+}
+
+body.dark-mode .footer {
+    background: #1c1c1c;
+}

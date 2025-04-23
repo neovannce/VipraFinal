@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Inputs: Text, URL, Email, Date, and Phone */
+input[type="text"], input[type="email"], input[type="date"], input[type="tel"], input[type="url"], select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="url"]:focus, select:focus, input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.income-switch {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.income-switch input[type="radio"] {
+    display: none;
+}
+
+.income-switch label {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.income-switch input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.btn-primary {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Styling for Social Media Links */
+input[type="url"] {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+}
+
+input[type="url"]:focus {
+    background-color: #fff;
+}
+
+/* Consistent spacing for social media fields */
+.form-group input[type="url"] {
+    margin-bottom: 15px;
+}

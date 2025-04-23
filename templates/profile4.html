@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Creation - विप्रVivah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="progress-nav">
+        <div class="progress-steps">
+            <div class="step">1</div>
+            <div class="step">2</div>
+            <div class="step">3</div>
+            <div class="step ">4</div>
+            <div class="step active">5</div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Identity Verification</h1>
+            <p>Complete your profile with identity verification and profile picture</p>
+        </div>
+
+        <form class="profile-form" action="{{ url_for('profile4') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="identity_type">Identity Verification *</label>
+                <select id="identity_type" name="identity_type" required>
+                    <option value="" disabled selected>Select ID (Choose Whichever Applicable)</option>
+                    <option value="adhar_card">Aadhaar Card</option>
+                    <option value="adhar_card_father">Aadhaar Card Father</option>
+                    <option value="adhar_card_mother">Aadhaar Card Mother</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="identity_number">Identity Number *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" id="identity_number" name="identity_number" pattern="\d{12}" title="Please enter a valid 12-digit Aadhaar number" required placeholder="Enter 12-digit Aadhaar number">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="profile_picture">Upload Profile Picture</label>
+                <div class="file-upload">
+                    <div class="file-upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop your photo here or click to browse</p>
+                        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="file-input">
+                    </div>
+                    <div class="file-preview">
+                        <img src="{{ preview_image_url }}" alt="Preview Image" class="preview-image">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                
+            
+                <button type="submit" class="btn btn-primary">
+                    Complete Profile <i class="fas fa-check"></i>
+                </button>
+            </div>
+            
+            
+        </form>
+    </div>
+
+    <script>
+        // Add smooth transitions and form validation
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            element.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        // Preview uploaded image
+        document.getElementById('profile_picture').addEventListener('change', function(e) {
+            const preview = document.querySelector('.preview-image');
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop functionality
+        const dropZone = document.querySelector('.file-upload-content');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('highlight');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('highlight');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('profile_picture').files = files;
+            
+            // Trigger the change event to show preview
+            const event = new Event('change');
+            document.getElementById('profile_picture').dispatchEvent(event);
+        }
+    </script>
+    <script>
+        document.getElementById("back-btn").addEventListener("click", function () {
+            window.location.href = "{{ url_for('profile3') }}";
+        });
+    </script>
+    
+    <script>
+        // Add the theme toggle script
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn?.querySelector('i');
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        }
+
+        // Load theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+
+        // Handle toggle button
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                const newTheme = isDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    </script>
+</body>
+</html>
