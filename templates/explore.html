@@ -50,8 +50,8 @@
                 <label for="gender"><i class="fas fa-venus-mars"></i> Looking for</label>
                 <select class="filter-select" id="gender" name="gender">
                     <option value="">Any</option>
-                    <option value="Male" {% if current_filters.gender == "Male" %}selected{% endif %}>Male</option>
-                    <option value="Female" {% if current_filters.gender == "Female" %}selected{% endif %}>Female</option>
+                    <option value="Male" {% if current_filters.gender == "male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if current_filters.gender == "female" %}selected{% endif %}>Female</option>
                     <option value="Other" {% if current_filters.gender == "Other" %}selected{% endif %}>Other</option>
                 </select>
             </div>
