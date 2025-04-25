@@ -26,161 +26,149 @@
         </div>
     </nav>
 
-    <div class="container mt-5 pt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="profile-title">My Profile</h2>
+    <div class="profile-container">
+        <div class="profile-picture-section">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture }}" 
+                     alt="{{ profile.name_first }}'s Profile Picture" 
+                     class="profile-picture">
+            {% else %}
+                <div class="no-image">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
         </div>
-        <div class="profile-container">
-            <div class="profile-picture-section">
-                {% if profile.profile_picture %}
-                    <img src="{{ profile.profile_picture }}" 
-                         alt="{{ profile.name_first }}'s Profile Picture" 
-                         class="profile-picture">
-                {% else %}
-                    <div class="no-image">
-                        <i class="fas fa-user"></i>
+
+        <div class="profile-cards-grid">
+            <!-- Basic Information Card -->
+            <div class="profile-card">
+                <h2><i class="fas fa-user"></i> Basic Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Gender</span>
+                        <span class="value"><i class="fas fa-venus-mars"></i> {{ profile.gender }}</span>
                     </div>
+                    <div class="info-item">
+                        <span class="label">Date of Birth</span>
+                        <span class="value"><i class="fas fa-calendar"></i> {{ profile.dob }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Email</span>
+                        <span class="value"><i class="fas fa-envelope"></i> {{ profile.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Phone</span>
+                        <span class="value"><i class="fas fa-phone"></i> {{ profile.phone }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Mother Tongue</span>
+                        <span class="value"><i class="fas fa-language"></i> {{ profile.mother_tongue }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Gotra</span>
+                        <span class="value"><i class="fas fa-om"></i> {{ profile.gotra }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Card -->
+            <div class="profile-card">
+                <h2><i class="fas fa-map-marker-alt"></i> Address</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Temporary Address</span>
+                        <span class="value"><i class="fas fa-home"></i> {{ profile.temp_address }}, {{ profile.temp_city }}, {{ profile.temp_state }} - {{ profile.temp_pincode }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Permanent Address</span>
+                        <span class="value"><i class="fas fa-building"></i> {{ profile.perm_address }}, {{ profile.perm_city }}, {{ profile.perm_state }} - {{ profile.perm_pincode }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Lives with Family</span>
+                        <span class="value"><i class="fas fa-users"></i> {{ profile.lives_with_family }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Marital Status</span>
+                        <span class="value"><i class="fas fa-heart"></i> {{ profile.marital_status }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Diet</span>
+                        <span class="value"><i class="fas fa-utensils"></i> {{ profile.diet }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education & Career Card -->
+            <div class="profile-card">
+                <h2><i class="fas fa-graduation-cap"></i> Education & Career</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Qualification</span>
+                        <span class="value"><i class="fas fa-book"></i> {{ profile.qualification }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Specialization</span>
+                        <span class="value"><i class="fas fa-star"></i> {{ profile.specialization }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Working Status</span>
+                        <span class="value"><i class="fas fa-briefcase"></i> {{ profile.working_status }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Works With</span>
+                        <span class="value"><i class="fas fa-building"></i> {{ profile.works_with }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Job Title</span>
+                        <span class="value"><i class="fas fa-id-badge"></i> {{ profile.job_title }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Income</span>
+                        <span class="value"><i class="fas fa-rupee-sign"></i> {{ profile.income }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partner Preferences Card -->
+            <div class="profile-card">
+                <h2><i class="fas fa-heart"></i> Partner Preferences</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Looking For</span>
+                        <span class="value"><i class="fas fa-search"></i> {{ profile.looking_for }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Age Range</span>
+                        <span class="value"><i class="fas fa-calendar-alt"></i> {{ profile.age_min }} - {{ profile.age_max }} years</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Preferred Mother Tongue</span>
+                        <span class="value"><i class="fas fa-language"></i> {{ profile.pref_mother_tongue }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media Card -->
+        <div class="social-card">
+            <h2><i class="fas fa-share-alt"></i> Social Media</h2>
+            <div class="social-links">
+                {% if profile.instagram %}
+                <a href="{{ profile.instagram }}" target="_blank" class="social-link">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+                {% endif %}
+                {% if profile.facebook %}
+                <a href="{{ profile.facebook }}" target="_blank" class="social-link">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a>
+                {% endif %}
+                {% if profile.linkedin %}
+                <a href="{{ profile.linkedin }}" target="_blank" class="social-link">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
                 {% endif %}
             </div>
-
-            <div class="profile-cards-grid">
-                <!-- Basic Information Card -->
-                <div class="profile-card">
-                    <h2><i class="fas fa-user"></i> Basic Information</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="label">Gender</span>
-                            <span class="value"><i class="fas fa-venus-mars"></i> {{ profile.gender }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Date of Birth</span>
-                            <span class="value"><i class="fas fa-calendar"></i> {{ profile.dob }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Email</span>
-                            <span class="value"><i class="fas fa-envelope"></i> {{ profile.email }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Phone</span>
-                            <span class="value"><i class="fas fa-phone"></i> {{ profile.phone }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Mother Tongue</span>
-                            <span class="value"><i class="fas fa-language"></i> {{ profile.mother_tongue }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Gotra</span>
-                            <span class="value"><i class="fas fa-om"></i> {{ profile.gotra }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Address Card -->
-                <div class="profile-card">
-                    <h2><i class="fas fa-map-marker-alt"></i> Address</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="label">Temporary Address</span>
-                            <span class="value"><i class="fas fa-home"></i> {{ profile.temp_address }}, {{ profile.temp_city }}, {{ profile.temp_state }} - {{ profile.temp_pincode }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Permanent Address</span>
-                            <span class="value"><i class="fas fa-building"></i> {{ profile.perm_address }}, {{ profile.perm_city }}, {{ profile.perm_state }} - {{ profile.perm_pincode }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Lives with Family</span>
-                            <span class="value"><i class="fas fa-users"></i> {{ profile.lives_with_family }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Marital Status</span>
-                            <span class="value"><i class="fas fa-heart"></i> {{ profile.marital_status }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Diet</span>
-                            <span class="value"><i class="fas fa-utensils"></i> {{ profile.diet }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Education & Career Card -->
-                <div class="profile-card">
-                    <h2><i class="fas fa-graduation-cap"></i> Education & Career</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="label">Qualification</span>
-                            <span class="value"><i class="fas fa-book"></i> {{ profile.qualification }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Specialization</span>
-                            <span class="value"><i class="fas fa-star"></i> {{ profile.specialization }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Working Status</span>
-                            <span class="value"><i class="fas fa-briefcase"></i> {{ profile.working_status }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Works With</span>
-                            <span class="value"><i class="fas fa-building"></i> {{ profile.works_with }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Job Title</span>
-                            <span class="value"><i class="fas fa-id-badge"></i> {{ profile.job_title }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Income</span>
-                            <span class="value"><i class="fas fa-rupee-sign"></i> {{ profile.income }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Partner Preferences Card -->
-                <div class="profile-card">
-                    <h2><i class="fas fa-heart"></i> Partner Preferences</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="label">Looking For</span>
-                            <span class="value"><i class="fas fa-search"></i> {{ profile.looking_for }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Age Range</span>
-                            <span class="value"><i class="fas fa-calendar-alt"></i> {{ profile.age_min }} - {{ profile.age_max }} years</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">Preferred Mother Tongue</span>
-                            <span class="value"><i class="fas fa-language"></i> {{ profile.pref_mother_tongue }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Social Media Card -->
-            <div class="social-card">
-                <h2><i class="fas fa-share-alt"></i> Social Media</h2>
-                <div class="social-links">
-                    {% if profile.instagram %}
-                    <a href="{{ profile.instagram }}" target="_blank" class="social-link">
-                        <i class="fab fa-instagram"></i> Instagram
-                    </a>
-                    {% endif %}
-                    {% if profile.facebook %}
-                    <a href="{{ profile.facebook }}" target="_blank" class="social-link">
-                        <i class="fab fa-facebook"></i> Facebook
-                    </a>
-                    {% endif %}
-                    {% if profile.linkedin %}
-                    <a href="{{ profile.linkedin }}" target="_blank" class="social-link">
-                        <i class="fab fa-linkedin"></i> LinkedIn
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Edit Profile Button moved to bottom -->
-        <div class="edit-profile-section text-center mt-5 mb-4">
-            <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">
-                <i class="fas fa-edit"></i> Edit Profile
-            </a>
         </div>
     </div>
 
