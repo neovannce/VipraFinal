@@ -105,8 +105,8 @@
                 <button type="button" class="btn btn-secondary" id="back-to-profile4-btn">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
-                <form action="{{ url_for('profile_success') }}" method="GET" style="display:inline;">
-                    <button type="submit" class="btn btn-primary">
+                <form action="{{ url_for('profile_success') }}" method="GET" style="display:inline;" id="submit-profile-form">
+                    <button type="submit" class="btn btn-primary" id="submit-profile-btn">
                         Submit Profile <i class="fas fa-check"></i>
                     </button>
                 </form>
@@ -122,6 +122,17 @@
             element.addEventListener('mouseleave', function() {
                 this.classList.remove('highlight');
             });
+        });
+
+        // Prevent multiple form submissions
+        document.getElementById('submit-profile-form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submit-profile-btn');
+            if (submitBtn.disabled) {
+                e.preventDefault();
+                return false;
+            }
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
         });
     </script>
     <script>

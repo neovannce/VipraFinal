@@ -1,0 +1,56 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a href="{{ url_for('home') }}" class="logo">
+            <i class="fas fa-heart"></i> विप्रVivah
+        </a>
+    </div>
+    
+    <div class="navbar-menu">
+        {% if session.user_id %}
+            <div class="profile-status">
+                {% if not session.profile_complete %}
+                    <div class="incomplete-profile">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Profile Incomplete</span>
+                        <div class="profile-warning">
+                            <i class="fas fa-lock"></i>
+                            <span>Complete your profile to access all features</span>
+                        </div>
+                        <a href="{{ url_for('index') }}" class="complete-profile-btn">
+                            Complete Profile
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="complete-profile">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Profile Complete</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="user-menu">
+                <a href="{{ url_for('myprofile') }}" class="nav-link">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                {% if session.profile_complete %}
+                    <a href="{{ url_for('explore') }}" class="nav-link">
+                        <i class="fas fa-search"></i> Explore
+                    </a>
+                {% else %}
+                    <span class="nav-link disabled">
+                        <i class="fas fa-search"></i> Explore
+                    </span>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        {% else %}
+            <div class="guest-menu">
+                <a href="{{ url_for('login_register') }}" class="nav-link">
+                    <i class="fas fa-sign-in-alt"></i> Login/Register
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</nav> 
