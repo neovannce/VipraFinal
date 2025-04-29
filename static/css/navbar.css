@@ -1,0 +1,152 @@
+.navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-brand .logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a154b;
+    text-decoration: none;
+}
+
+.navbar-brand .logo i {
+    margin-right: 0.5rem;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.profile-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.incomplete-profile,
+.complete-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.incomplete-profile {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.complete-profile {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.complete-profile-btn {
+    background-color: #4a154b;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+.complete-profile-btn:hover {
+    background-color: #3a0f3a;
+}
+
+.user-menu,
+.guest-menu {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: #4a154b;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #3a0f3a;
+}
+
+.nav-link i {
+    font-size: 1.1rem;
+}
+
+.main-content {
+    margin-top: 4rem;
+    padding: 2rem;
+    min-height: calc(100vh - 4rem);
+}
+
+.flash-message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash-message.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.flash-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.profile-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+    color: #721c24;
+}
+
+.profile-warning i {
+    font-size: 0.9rem;
+}
+
+.nav-link.disabled {
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.nav-link.disabled:hover {
+    color: #6c757d;
+} 

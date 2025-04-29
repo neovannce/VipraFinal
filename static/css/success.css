@@ -1,0 +1,188 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;  /* Ensures the container is vertically centered */
+}
+
+.container {
+    width: 80%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;  /* Center-align text inside the container */
+}
+
+h1 {
+    color: #4CAF50;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.section {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.section img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image fills the circle without distortion */
+    border: 2px solid #4CAF50; /* Optional: adds a border around the circle */
+}
+
+
+.section h2 {
+    color: #4CAF50;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.section p {
+    font-size: 1em;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+strong {
+    color: #555;
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.confirm-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+
+.confirm-button:hover {
+    background-color: #45a049;
+    transition: background-color 0.3s;
+}
+.profile-photo {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4CAF50;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.2);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .success-container {
+    background: #1e1e1e;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .success-icon {
+    color: #f1c40f;
+}
+
+body.dark-mode h1 {
+    color: #f1c40f;
+}
+
+body.dark-mode p {
+    color: #cccccc;
+}
+
+body.dark-mode .btn-primary {
+    background: #f1c40f;
+    color: #1e1e1e;
+}
+
+body.dark-mode .btn-primary:hover {
+    background: #f39c12;
+}
+
+body.dark-mode .theme-toggle {
+    color: #f1c40f;
+}
+
+/* Animation for success icon in dark mode */
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+body.dark-mode .success-icon i {
+    animation: successPulse 2s infinite;
+}
+
+/* Dark mode styles for links */
+body.dark-mode a {
+    color: #f1c40f;
+}
+
+body.dark-mode a:hover {
+    color: #f39c12;
+}
+
+/* Dark mode styles for any additional buttons */
+body.dark-mode .btn-secondary {
+    background: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #3d3d3d;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #3d3d3d;
+}
+
+/* Dark mode styles for success message */
+body.dark-mode .success-message {
+    background: #2d2d2d;
+    border-color: #3d3d3d;
+}
+
+/* Dark mode styles for action buttons container */
+body.dark-mode .action-buttons {
+    border-top-color: #3d3d3d;
+}
