@@ -111,84 +111,107 @@ def register():
 
 def check_profile_completion(user_id):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
     profile_data = {}
     missing_sections = []
     missing_fields = {}
     
     try:
         # Check users_preferences
-        cursor.execute("SELECT * FROM users_preferences WHERE user_id = %s", (user_id,))
-        preferences = cursor.fetchone()
-        profile_data['preferences'] = preferences
-        if not preferences:
+        try:
+            cursor.execute("SELECT * FROM users_preferences WHERE user_id = %s", (user_id,))
+            preferences = cursor.fetchone()
+            profile_data['preferences'] = preferences
+            if not preferences:
+                missing_sections.append('preferences')
+            else:
+                # Check required fields in preferences
+                required_pref_fields = ['looking_for', 'age_min', 'age_max']
+                missing_pref_fields = [field for field in required_pref_fields if not preferences.get(field)]
+                if missing_pref_fields:
+                    missing_fields['preferences'] = missing_pref_fields
+        except Exception as e:
+            print(f"Error checking preferences: {str(e)}")
             missing_sections.append('preferences')
-        else:
-            # Check required fields in preferences
-            required_pref_fields = ['looking_for', 'age_min', 'age_max']
-            missing_pref_fields = [field for field in required_pref_fields if not preferences.get(field)]
-            if missing_pref_fields:
-                missing_fields['preferences'] = missing_pref_fields
 
         # Check profiles_basic_info
-        cursor.execute("SELECT * FROM profiles_basic_info WHERE user_id = %s", (user_id,))
-        basic_info = cursor.fetchone()
-        profile_data['basic_info'] = basic_info
-        if not basic_info:
+        try:
+            cursor.execute("SELECT * FROM profiles_basic_info WHERE user_id = %s", (user_id,))
+            basic_info = cursor.fetchone()
+            profile_data['basic_info'] = basic_info
+            if not basic_info:
+                missing_sections.append('basic_info')
+            else:
+                # Check required fields in basic info
+                required_basic_fields = ['profile_for', 'gender', 'first_name', 'last_name', 
+                                       'dob', 'age', 'religion', 'gotra', 'email', 'phone']
+                missing_basic_fields = [field for field in required_basic_fields if not basic_info.get(field)]
+                if missing_basic_fields:
+                    missing_fields['basic_info'] = missing_basic_fields
+        except Exception as e:
+            print(f"Error checking basic info: {str(e)}")
             missing_sections.append('basic_info')
-        else:
-            # Check required fields in basic info
-            required_basic_fields = ['profile_for', 'gender', 'first_name', 'last_name', 
-                                   'dob', 'age', 'religion', 'gotra', 'email', 'phone']
-            missing_basic_fields = [field for field in required_basic_fields if not basic_info.get(field)]
-            if missing_basic_fields:
-                missing_fields['basic_info'] = missing_basic_fields
 
         # Check addresses
-        cursor.execute("SELECT * FROM addresses WHERE user_id = %s", (user_id,))
-        address = cursor.fetchone()
-        profile_data['address'] = address
-        if not address:
+        try:
+            cursor.execute("SELECT * FROM addresses WHERE user_id = %s", (user_id,))
+            address = cursor.fetchone()
+            profile_data['address'] = address
+            if not address:
+                missing_sections.append('address')
+            else:
+                # Check required fields in address
+                required_address_fields = ['temp_address', 'temp_city', 'temp_state', 
+                                         'temp_pincode', 'marital_status']
+                missing_address_fields = [field for field in required_address_fields if not address.get(field)]
+                if missing_address_fields:
+                    missing_fields['address'] = missing_address_fields
+        except Exception as e:
+            print(f"Error checking address: {str(e)}")
             missing_sections.append('address')
-        else:
-            # Check required fields in address
-            required_address_fields = ['temp_address', 'temp_city', 'temp_state', 
-                                     'temp_pincode', 'marital_status']
-            missing_address_fields = [field for field in required_address_fields if not address.get(field)]
-            if missing_address_fields:
-                missing_fields['address'] = missing_address_fields
 
         # Check education_career
-        cursor.execute("SELECT * FROM education_career WHERE user_id = %s", (user_id,))
-        career = cursor.fetchone()
-        profile_data['career'] = career
-        if not career:
+        try:
+            cursor.execute("SELECT * FROM education_career WHERE user_id = %s", (user_id,))
+            career = cursor.fetchone()
+            profile_data['career'] = career
+            if not career:
+                missing_sections.append('career')
+            else:
+                # Check required fields in career
+                required_career_fields = ['qualification', 'working_status']
+                missing_career_fields = [field for field in required_career_fields if not career.get(field)]
+                if missing_career_fields:
+                    missing_fields['career'] = missing_career_fields
+        except Exception as e:
+            print(f"Error checking career: {str(e)}")
             missing_sections.append('career')
-        else:
-            # Check required fields in career
-            required_career_fields = ['qualification', 'working_status']
-            missing_career_fields = [field for field in required_career_fields if not career.get(field)]
-            if missing_career_fields:
-                missing_fields['career'] = missing_career_fields
 
         # Check identity_verification
-        cursor.execute("SELECT * FROM identity_verification WHERE user_id = %s", (user_id,))
-        identity = cursor.fetchone()
-        profile_data['identity'] = identity
-        if not identity:
+        try:
+            cursor.execute("SELECT * FROM identity_verification WHERE user_id = %s", (user_id,))
+            identity = cursor.fetchone()
+            profile_data['identity'] = identity
+            if not identity:
+                missing_sections.append('identity')
+            else:
+                # Check required fields in identity
+                required_identity_fields = ['identity_type', 'identity_number']
+                missing_identity_fields = [field for field in required_identity_fields if not identity.get(field)]
+                if missing_identity_fields:
+                    missing_fields['identity'] = missing_identity_fields
+        except Exception as e:
+            print(f"Error checking identity: {str(e)}")
             missing_sections.append('identity')
-        else:
-            # Check required fields in identity
-            required_identity_fields = ['identity_type', 'identity_number']
-            missing_identity_fields = [field for field in required_identity_fields if not identity.get(field)]
-            if missing_identity_fields:
-                missing_fields['identity'] = missing_identity_fields
 
         # Profile is complete only if all sections exist and all required fields are filled
         is_complete = len(missing_sections) == 0 and len(missing_fields) == 0
         
         return is_complete, profile_data, missing_sections, missing_fields
 
+    except Exception as e:
+        print(f"Error in check_profile_completion: {str(e)}")
+        raise e
     finally:
         cursor.close()
         conn.close()
