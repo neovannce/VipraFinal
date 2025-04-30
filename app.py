@@ -85,28 +85,32 @@ def register():
     hashed_pw = generate_password_hash(password)
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
 
-    cursor.execute("SELECT * FROM users WHERE username=%s OR email=%s", (username, email))
-    user_exists = cursor.fetchone()
+    try:
+        cursor.execute("SELECT * FROM users WHERE username=%s OR email=%s", (username, email))
+        user_exists = cursor.fetchone()
 
-    if user_exists:
-        flash("Username or Email already exists!", "error")
+        if user_exists:
+            flash("Username or Email already exists!", "error")
+            return redirect(url_for('login_register'))
+
+        cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+                       (username, email, hashed_pw))
+        conn.commit()
+        user_id = cursor.lastrowid
+
+        session['user_id'] = user_id
+        session['username'] = username
+
+        flash("Account created successfully!", "success")
+        return redirect(url_for('index'))
+    except Exception as e:
+        flash(f"Error during registration: {str(e)}", "error")
         return redirect(url_for('login_register'))
-
-    cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                   (username, email, hashed_pw))
-    conn.commit()
-    user_id = cursor.lastrowid
-
-    session['user_id'] = user_id
-    session['username'] = username
-
-    cursor.close()
-    conn.close()
-
-    flash("Account created successfully!", "success")
-    return redirect(url_for('index'))
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def check_profile_completion(user_id):
@@ -223,44 +227,49 @@ def login():
     password = request.form['password']
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-    user = cursor.fetchone()
+    cursor = conn.cursor(buffered=True, dictionary=True)
+    
+    try:
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
-
-    if user and check_password_hash(user['password'], password):
-        session['user_id'] = user['id']
-        session['username'] = user['username']
-        
-        # Check profile completion status
-        is_complete, profile_data, missing_sections, missing_fields = check_profile_completion(user['id'])
-        session['profile_complete'] = is_complete
-        
-        if not is_complete:
-            # Determine which page to redirect to based on missing sections
-            if 'preferences' in missing_sections:
-                flash("Please complete your preferences to continue.", "warning")
-                return redirect(url_for('index'))
-            elif 'basic_info' in missing_sections:
-                flash("Please complete your basic profile information.", "warning")
-                return redirect(url_for('profile'))
-            elif 'address' in missing_sections:
-                flash("Please complete your address information.", "warning")
-                return redirect(url_for('profile2'))
-            elif 'career' in missing_sections:
-                flash("Please complete your education and career information.", "warning")
-                return redirect(url_for('profile3'))
-            elif 'identity' in missing_sections:
-                flash("Please complete your identity verification.", "warning")
-                return redirect(url_for('profile4'))
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            
+            # Check profile completion status
+            is_complete, profile_data, missing_sections, missing_fields = check_profile_completion(user['id'])
+            session['profile_complete'] = is_complete
+            
+            if not is_complete:
+                # Determine which page to redirect to based on missing sections
+                if 'preferences' in missing_sections:
+                    flash("Please complete your preferences to continue.", "warning")
+                    return redirect(url_for('index'))
+                elif 'basic_info' in missing_sections:
+                    flash("Please complete your basic profile information.", "warning")
+                    return redirect(url_for('profile'))
+                elif 'address' in missing_sections:
+                    flash("Please complete your address information.", "warning")
+                    return redirect(url_for('profile2'))
+                elif 'career' in missing_sections:
+                    flash("Please complete your education and career information.", "warning")
+                    return redirect(url_for('profile3'))
+                elif 'identity' in missing_sections:
+                    flash("Please complete your identity verification.", "warning")
+                    return redirect(url_for('profile4'))
+            else:
+                flash("Login successful!", "success")
+                return redirect(url_for('explore'))
         else:
-            flash("Login successful!", "success")
-            return redirect(url_for('explore'))
-    else:
-        flash("Invalid username or password", "error")
+            flash("Invalid username or password", "error")
+            return redirect(url_for('login_register'))
+    except Exception as e:
+        flash(f"Error during login: {str(e)}", "error")
         return redirect(url_for('login_register'))
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/logout')
@@ -284,16 +293,21 @@ def index():
         mother_tongue = request.form['mother_tongue']
 
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO users_preferences (user_id, looking_for, age_min, age_max, mother_tongue)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (user_id, looking_for, age_min, age_max, mother_tongue))
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return redirect(url_for('profile'))
+        cursor = conn.cursor(buffered=True)
+        
+        try:
+            cursor.execute("""
+                INSERT INTO users_preferences (user_id, looking_for, age_min, age_max, mother_tongue)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (user_id, looking_for, age_min, age_max, mother_tongue))
+            conn.commit()
+            return redirect(url_for('profile'))
+        except Exception as e:
+            flash(f"Error saving preferences: {str(e)}", "error")
+            return redirect(url_for('index'))
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template('index.html')
 
@@ -323,23 +337,28 @@ def profile():
         phone = request.form['phone']
 
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO profiles_basic_info (
+        cursor = conn.cursor(buffered=True)
+        
+        try:
+            cursor.execute("""
+                INSERT INTO profiles_basic_info (
+                    user_id, profile_for, gender, first_name, middle_name, last_name,
+                    father_name, mother_name, dob, age, religion, gotra,
+                    mother_tongue, height, email, phone
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
                 user_id, profile_for, gender, first_name, middle_name, last_name,
                 father_name, mother_name, dob, age, religion, gotra,
                 mother_tongue, height, email, phone
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            user_id, profile_for, gender, first_name, middle_name, last_name,
-            father_name, mother_name, dob, age, religion, gotra,
-            mother_tongue, height, email, phone
-        ))
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return redirect(url_for('profile2'))  # next page (to be added later)
+            ))
+            conn.commit()
+            return redirect(url_for('profile2'))
+        except Exception as e:
+            flash(f"Error saving profile: {str(e)}", "error")
+            return redirect(url_for('profile'))
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template('profile.html')
 
@@ -379,26 +398,30 @@ def profile2():
         marital_status = request.form.get('marital_status', '')
         diet = ','.join(request.form.getlist('diet'))
 
-        # Insert into DB
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO addresses (
-                user_id, temp_address, temp_city, temp_district, temp_state, temp_pincode,
+        cursor = conn.cursor(buffered=True)
+        
+        try:
+            cursor.execute("""
+                INSERT INTO addresses (
+                    user_id, temp_address, temp_city, temp_district, temp_state, temp_pincode,
+                    perm_address, perm_city, perm_district, perm_state, perm_pincode,
+                    lives_with_family, marital_status, diet
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                user_id,
+                temp_address, temp_city, temp_district, temp_state, temp_pincode,
                 perm_address, perm_city, perm_district, perm_state, perm_pincode,
                 lives_with_family, marital_status, diet
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            user_id,
-            temp_address, temp_city, temp_district, temp_state, temp_pincode,
-            perm_address, perm_city, perm_district, perm_state, perm_pincode,
-            lives_with_family, marital_status, diet
-        ))
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return redirect(url_for('profile3'))
+            ))
+            conn.commit()
+            return redirect(url_for('profile3'))
+        except Exception as e:
+            flash(f"Error saving address: {str(e)}", "error")
+            return redirect(url_for('profile2'))
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template('profile2.html')
 
@@ -412,28 +435,34 @@ def profile3():
             return redirect(url_for('login_register'))
 
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO education_career (
-                user_id, qualification, specialization, working_status,
-                works_with, job_title, income, instagram, facebook, linkedin
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            user_id,
-            request.form['qualification'],
-            request.form.get('specialization'),
-            request.form['working_status'],
-            request.form.get('works_with'),
-            request.form.get('job_title'),
-            request.form['income'],
-            request.form.get('instagram'),
-            request.form.get('facebook'),
-            request.form.get('linkedin')
-        ))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('profile4'))
+        cursor = conn.cursor(buffered=True)
+        
+        try:
+            cursor.execute("""
+                INSERT INTO education_career (
+                    user_id, qualification, specialization, working_status,
+                    works_with, job_title, income, instagram, facebook, linkedin
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                user_id,
+                request.form['qualification'],
+                request.form.get('specialization'),
+                request.form['working_status'],
+                request.form.get('works_with'),
+                request.form.get('job_title'),
+                request.form['income'],
+                request.form.get('instagram'),
+                request.form.get('facebook'),
+                request.form.get('linkedin')
+            ))
+            conn.commit()
+            return redirect(url_for('profile4'))
+        except Exception as e:
+            flash(f"Error saving education/career info: {str(e)}", "error")
+            return redirect(url_for('profile3'))
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template('profile3.html')
 
@@ -460,18 +489,24 @@ def profile4():
                 print("Error during upload:", e)
 
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO identity_verification (user_id, identity_type, identity_number, profile_picture)
-            VALUES (%s, %s, %s, %s)
-        """, (
-            user_id, identity_type, identity_number,
-            image_url
-        ))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('success'))
+        cursor = conn.cursor(buffered=True)
+        
+        try:
+            cursor.execute("""
+                INSERT INTO identity_verification (user_id, identity_type, identity_number, profile_picture)
+                VALUES (%s, %s, %s, %s)
+            """, (
+                user_id, identity_type, identity_number,
+                image_url
+            ))
+            conn.commit()
+            return redirect(url_for('success'))
+        except Exception as e:
+            flash(f"Error saving identity verification: {str(e)}", "error")
+            return redirect(url_for('profile4'))
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template('profile4.html')
 
@@ -488,7 +523,7 @@ def success():
         return redirect(url_for('profile_success'))
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
     profile_data = {}
 
     try:
@@ -516,7 +551,6 @@ def success():
         print("Error fetching profile data:", e)
         flash("There was a problem loading your profile.", "error")
         return redirect(url_for('success'))
-
     finally:
         cursor.close()
         conn.close()
@@ -557,129 +591,136 @@ def explore():
     city = request.args.get('city')
     gotra = request.args.get('gotra')
 
-    # Base query - Only show profiles of users who have completed all sections
-    query = """
-        SELECT DISTINCT
-            p.id, 
-            CONCAT(p.first_name, ' ', p.last_name) AS name, 
-            p.age,
-            p.mother_tongue, 
-            p.gotra, 
-            a.temp_city AS city,
-            i.profile_picture, 
-            p.gender
-        FROM profiles_basic_info p
-        INNER JOIN addresses a ON p.user_id = a.user_id
-        INNER JOIN identity_verification i ON p.user_id = i.user_id
-        INNER JOIN education_career ec ON p.user_id = ec.user_id
-        INNER JOIN users_preferences up ON p.user_id = up.user_id
-        WHERE p.user_id != %s
-        AND p.user_id IS NOT NULL
-        AND a.user_id IS NOT NULL
-        AND ec.user_id IS NOT NULL
-        AND i.user_id IS NOT NULL
-        AND up.user_id IS NOT NULL
-    """
-    params = [session['user_id']]
-
-    # Build filter conditions
-    filter_conditions = []
-    
-    if gender and gender != "Any":
-        filter_conditions.append("p.gender = %s")
-        params.append(gender)
-    
-    if mother_tongue and mother_tongue != "Any":
-        filter_conditions.append("p.mother_tongue = %s")
-        params.append(mother_tongue)
-    
-    if city and city != "Any":
-        filter_conditions.append("a.temp_city = %s")
-        params.append(city)
-    
-    if gotra and gotra != "Any":
-        filter_conditions.append("p.gotra = %s")
-        params.append(gotra)
-
-    # Add filter conditions to query if any exist
-    if filter_conditions:
-        query += " AND " + " AND ".join(filter_conditions)
-
-    # Get user's preferences
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
     
-    # Execute the query
-    cursor.execute(query, tuple(params))
-    profiles = cursor.fetchall()
-    
-    cursor.close()
-    conn.close()
+    try:
+        # Base query - Only show profiles of users who have completed all sections
+        query = """
+            SELECT DISTINCT
+                p.id, 
+                CONCAT(p.first_name, ' ', p.last_name) AS name, 
+                p.age,
+                p.mother_tongue, 
+                p.gotra, 
+                a.temp_city AS city,
+                i.profile_picture, 
+                p.gender
+            FROM profiles_basic_info p
+            INNER JOIN addresses a ON p.user_id = a.user_id
+            INNER JOIN identity_verification i ON p.user_id = i.user_id
+            INNER JOIN education_career ec ON p.user_id = ec.user_id
+            INNER JOIN users_preferences up ON p.user_id = up.user_id
+            WHERE p.user_id != %s
+            AND p.user_id IS NOT NULL
+            AND a.user_id IS NOT NULL
+            AND ec.user_id IS NOT NULL
+            AND i.user_id IS NOT NULL
+            AND up.user_id IS NOT NULL
+        """
+        params = [session['user_id']]
 
-    if not profiles:
-        flash("No matching profiles found. Try adjusting your search filters.", "info")
+        # Build filter conditions
+        filter_conditions = []
+        
+        if gender and gender != "Any":
+            filter_conditions.append("p.gender = %s")
+            params.append(gender)
+        
+        if mother_tongue and mother_tongue != "Any":
+            filter_conditions.append("p.mother_tongue = %s")
+            params.append(mother_tongue)
+        
+        if city and city != "Any":
+            filter_conditions.append("a.temp_city = %s")
+            params.append(city)
+        
+        if gotra and gotra != "Any":
+            filter_conditions.append("p.gotra = %s")
+            params.append(gotra)
 
-    return render_template('explore.html', 
-                         profiles=profiles,
-                         current_filters={
-                             'gender': gender,
-                             'mother_tongue': mother_tongue,
-                             'city': city,
-                             'gotra': gotra
-                         })
+        # Add filter conditions to query if any exist
+        if filter_conditions:
+            query += " AND " + " AND ".join(filter_conditions)
+
+        # Execute the query
+        cursor.execute(query, tuple(params))
+        profiles = cursor.fetchall()
+
+        if not profiles:
+            flash("No matching profiles found. Try adjusting your search filters.", "info")
+
+        return render_template('explore.html', 
+                             profiles=profiles,
+                             current_filters={
+                                 'gender': gender,
+                                 'mother_tongue': mother_tongue,
+                                 'city': city,
+                                 'gotra': gotra
+                             })
+    except Exception as e:
+        flash(f"Error searching profiles: {str(e)}", "error")
+        return redirect(url_for('explore'))
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/profile/<int:profile_id>')
 def profile_detail(profile_id):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True, buffered=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
 
-    cursor.execute("""
-        SELECT 
-            p.first_name AS name_first,
-            p.last_name AS name_last,
-            p.gender,
-            p.dob,
-            p.religion,
-            p.mother_tongue,
-            p.gotra,
-            p.age,
-            a.temp_address,
-            a.temp_city,
-            a.temp_state,
-            a.perm_address,
-            a.lives_with_family,
-            a.marital_status,
-            a.diet,
-            e.qualification,
-            e.specialization,
-            e.working_status,
-            e.works_with,
-            e.job_title,
-            e.income,
-            e.instagram,
-            e.facebook,
-            e.linkedin,
-            p.phone,
-            up.looking_for,
-            up.age_min,
-            up.age_max
-        FROM profiles_basic_info p
-        LEFT JOIN addresses a ON p.user_id = a.user_id
-        LEFT JOIN education_career e ON p.user_id = e.user_id
-        LEFT JOIN users_preferences up ON p.user_id = up.user_id
-        WHERE p.id = %s
-    """, (profile_id,))
+    try:
+        cursor.execute("""
+            SELECT 
+                p.first_name AS name_first,
+                p.last_name AS name_last,
+                p.gender,
+                p.dob,
+                p.religion,
+                p.mother_tongue,
+                p.gotra,
+                p.age,
+                a.temp_address,
+                a.temp_city,
+                a.temp_state,
+                a.perm_address,
+                a.lives_with_family,
+                a.marital_status,
+                a.diet,
+                e.qualification,
+                e.specialization,
+                e.working_status,
+                e.works_with,
+                e.job_title,
+                e.income,
+                e.instagram,
+                e.facebook,
+                e.linkedin,
+                p.phone,
+                up.looking_for,
+                up.age_min,
+                up.age_max
+            FROM profiles_basic_info p
+            LEFT JOIN addresses a ON p.user_id = a.user_id
+            LEFT JOIN education_career e ON p.user_id = e.user_id
+            LEFT JOIN users_preferences up ON p.user_id = up.user_id
+            WHERE p.id = %s
+        """, (profile_id,))
+        profile = cursor.fetchone()
 
-    profile = cursor.fetchone()
+        if not profile:
+            flash("Profile not found", "error")
+            return redirect(url_for('explore'))
 
-    cursor.close()
-    conn.close()
-
-    if not profile:
-        flash("Profile not found", "error")
+        return render_template('profile_detail.html', profile=profile)
+    except Exception as e:
+        flash(f"Error loading profile: {str(e)}", "error")
         return redirect(url_for('explore'))
+    finally:
+        cursor.close()
+        conn.close()
 
-    return render_template('profile_detail.html', profile=profile)
 @app.route('/myprofile')
 def myprofile():
     if 'user_id' not in session:
@@ -687,9 +728,8 @@ def myprofile():
         return redirect(url_for('login_register'))
 
     user_id = session['user_id']
-
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True, buffered=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
 
     try:
         cursor.execute("""
@@ -728,15 +768,17 @@ def myprofile():
         """, (user_id,))
         profile = cursor.fetchone()
 
+        if not profile:
+            flash("Profile not found.", "error")
+            return redirect(url_for('index'))
+
+        return render_template('myprofile.html', profile=profile)
+    except Exception as e:
+        flash(f"Error loading profile: {str(e)}", "error")
+        return redirect(url_for('myprofile'))
     finally:
         cursor.close()
         conn.close()
-
-    if not profile:
-        flash("Profile not found.", "error")
-        return redirect(url_for('index'))
-
-    return render_template('myprofile.html', profile=profile)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -746,7 +788,7 @@ def edit_profile():
 
     user_id = session['user_id']
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(buffered=True, dictionary=True)
 
     if request.method == 'POST':
         try:
@@ -866,6 +908,9 @@ def edit_profile():
         """, (user_id,))
         profile = cursor.fetchone()
 
+    except Exception as e:
+        flash(f"Error fetching profile data: {str(e)}", "error")
+        return redirect(url_for('myprofile'))
     finally:
         cursor.close()
         conn.close()
